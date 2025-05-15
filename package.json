@@ -1,0 +1,44 @@
+{
+  "name": "playwright-framework-prject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:api": "playwright test src/api/tests",
+    "test:e2e": "playwright test src/e2e/tests --config=playwright.config.ts",
+    "test:e2e:ci": "npm run allure:remove && playwright test src/e2e/tests --reporter=line --config=playwright.config.ts --workers=2 && npm run allure:generate",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:sanity": "playwright test --grep @sanity",
+    "test:regression": "playwright test --grep @regression",
+    "test:ci": "npm run allure:remove && playwright test --reporter=line --config=playwright.config.ts --workers=2 && npm run allure:generate",
+    "test:report": "npm run allure:remove && npm run test && npm run allure:generate && npm run allure:open",
+    "allure:install": "npm install --save-dev allure-playwright",
+    "allure:remove": "rimraf test-report/allure-results test-report/allure-report",
+    "allure:generate": "npx allure generate test-report/allure-results --clean -o test-report/allure-report",
+    "allure:open": "allure open test-report/allure-report",
+    "report": "npm run allure:generate && npm run allure:open",
+    "pretest": "tsc --noEmit",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write ."
+  },
+  "keywords": [],
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.15.17",
+    "@types/winston": "^2.4.4",
+    "allure-playwright": "^3.2.2",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.7.0",
+    "@wdio/allure-reporter": "^9.13.0",
+    "dotenv": "^16.5.0"
+  }
+}
