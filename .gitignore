@@ -13,7 +13,7 @@ playwright-report/
 src/secrets
 
 # Environment variables
-.env*
+.env
 .git
 
 
