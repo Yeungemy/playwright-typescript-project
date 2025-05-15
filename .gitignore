@@ -7,7 +7,7 @@ docs/
 
 # Test outputs (unified under test-report/)
 test-report/
-playwright-report/
+# src/playwright-report
 
 # Secrets or sensitive info
 src/secrets

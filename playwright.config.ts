@@ -24,8 +24,8 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   reporter: [
-    ['line'],
-    ['html', { outputFolder: `${testReportPath}/html-report` }],
+    // ['line'],
+    // ['html', { outputFolder: `${testReportPath}/html-report` }],
     [
       'allure-playwright',
       {
