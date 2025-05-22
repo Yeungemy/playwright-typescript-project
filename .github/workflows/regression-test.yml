@@ -1,0 +1,18 @@
+name: Playwright Regression Tests
+
+on:
+  schedule:
+    - cron: '0 18 * * *' # 6 PM UTC
+  workflow_dispatch:
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/playwright-setup
+      - run: npm run regression
+      - uses: ./.github/actions/playwright-report
+        if: always()
+        with:
+          test-step-outcome: ${{ job.status }}

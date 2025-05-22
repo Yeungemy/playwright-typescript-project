@@ -1,0 +1,46 @@
+name: 'Allure Report'
+description: 'Generate and Upload Allure Report from Playwright'
+
+inputs:
+  test-step-outcome:
+    description: 'Outcome of the test step (success or failure)'
+    required: true
+  allure-upload:
+    description: 'Whether to always upload the Allure report or only on failure'
+    required: false
+    default: 'false'
+  allure-retention-days:
+    description: 'Retention days for the uploaded Allure report artifact'
+    required: false
+    default: '5'
+  allure-results-path:
+    description: 'Path to the Allure results directory'
+    required: false
+    default: 'dist/test-report/allure-results'
+  allure-report-path:
+    description: 'Output directory for the generated Allure report'
+    required: false
+    default: 'dist/test-report/allure-report'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Allure CLI if missing
+      run: |
+        if ! command -v allure &> /dev/null; then
+          npm install -g allure-commandline@2.20.1
+        fi
+      shell: bash
+
+    - name: Generate Allure Report
+      run: |
+        npx allure generate "${{ inputs.allure-results-path }}" --clean -o "${{ inputs.allure-report-path }}"
+      shell: bash
+
+    - name: Upload Allure Report Artifact
+      uses: actions/upload-artifact@v4
+      if: ${{ inputs.allure-upload == 'true' || inputs.test-step-outcome == 'failure' }}
+      with:
+        name: allure-report-${{ github.job }}
+        path: ${{ inputs.allure-report-path }}
+        retention-days: ${{ inputs.allure-retention-days }}

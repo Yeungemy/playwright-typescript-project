@@ -1,0 +1,16 @@
+name: Playwright E2E Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/playwright-setup
+      - run: npm run e2e
+      - uses: ./.github/actions/playwright-report
+        if: always()
+        with:
+          test-step-outcome: ${{ job.status }}
