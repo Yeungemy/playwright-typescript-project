@@ -1,6 +1,6 @@
 # Node modules
 node_modules/
-#package-lock.json
+package-lock.json
 docs/
 #.github
 
@@ -8,7 +8,7 @@ docs/
 src/secrets
 
 # Environment variables
-.env
+# .env
 .git
 
 

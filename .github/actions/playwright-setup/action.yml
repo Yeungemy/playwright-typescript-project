@@ -30,7 +30,7 @@ runs:
 
     - name: Install npm Dependencies
       if: ${{ steps.cache-dependencies.outputs.cache-hit != 'true' || inputs.caching-dependencies != 'true' }}
-      run: npm ci
+      run: npm install
       shell: bash
 
     - name: Cache Playwright Browsers
