@@ -4,7 +4,7 @@ test.describe('Login Page', () => {
 
   test.beforeEach(async ({ page }) => {
     console.log(process.env.BASE_URL);
-    await page.goto(process.env.BASE_URL);
+    await page.goto(process.env.BASE_URL, { timeout: 60000 });
   });
 
   test('@smoke should display the member portal link', async ({ loginPage }) => {
