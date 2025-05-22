@@ -1,4 +1,4 @@
-import { test, expect } from '../../../pages/index';
+import { test, expect } from '../../../fixtures/pom/pageFactory';
 
 test.describe('Login Page', () => {
 
