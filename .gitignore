@@ -2,7 +2,7 @@
 node_modules/
 package-lock.json
 docs/
-#.github/
+.github
 
 # Secrets or sensitive info
 src/secrets
