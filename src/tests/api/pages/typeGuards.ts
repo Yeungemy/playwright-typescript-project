@@ -16,7 +16,7 @@ import type {
  */
 export type ApiRequestParams = {
     method: 'POST' | 'GET' | 'PUT' | 'DELETE';
-    url?: string;
+    url: string;
     baseUrl?: string;
     body?: Record<string, unknown> | null;
     headers?: string;
