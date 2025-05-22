@@ -1,15 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 import os from 'os';
 import fs from 'fs';
-import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config();
 
-// Load env (you can optimize loading env once, but I keep your structure)
-const environment = process.env.ENV || 'dev';
-require('dotenv').config({
-  path: path.resolve(__dirname, `.env.${environment}`)
-});
-
-const testReportPath = 'test-report';
+const testReportPath = 'dist/test-report';
 
 // Ensure the folder exists
 if (!fs.existsSync(testReportPath)) {
@@ -37,7 +32,6 @@ export default defineConfig({
           os_release: os.release(),
           os_version: (os as any).version?.() || 'N/A',
           node_version: process.version,
-          environment,
         },
       },
     ],
@@ -45,6 +39,7 @@ export default defineConfig({
 
   use: {
     baseURL: process.env.BASE_URL,
+    // headless: false, 
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

@@ -1,13 +1,13 @@
-import { LoginPage } from "../pages/loginPage/login.page";
-import { test as base } from '@playwright/test';
+// import { LoginPage } from "../pages/login.page";
+// import { test as base } from '@playwright/test';
 
-type setupFixtures = {
-    loginPage: LoginPage
-};
+// type setupFixtures = {
+//     loginPage: LoginPage
+// };
 
-export const test = base.extend<setupFixtures>({
-    loginPage: async ({ page }, use) => {
-        const loginPage = new LoginPage(page);
-        await use(loginPage);
-    }
-});
+// export const test = base.extend<setupFixtures>({
+//     loginPage: async ({ page }: { page: import('@playwright/test').Page }, use) => {
+//         const loginPage = new LoginPage(page);
+//         await use(loginPage);
+//     }
+// });

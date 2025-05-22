@@ -55,6 +55,72 @@ npm install @wdio/allure-reporter
 npm install --save-dev @types/wdio__allure-reporter
 
 
+# Scripts
+ // 🧪 Run UI mode (experimental) for selecting and running tests visually
+  "ui": "npx playwright test --project=chromium --ui",
+
+  // ✅ Standard test run using Chromium
+  "test": "npx playwright test --project=chromium",
+
+  // 🖥️ Run all tests in headed (non-headless) mode for visual debugging
+  "headed": "npx playwright test --headed",
+
+  // 📡 Run all API tests
+  "api": "npx playwright test src/api/tests",
+
+  // 🌐 Run all E2E tests using a specific config and Chromium
+  "e2e": "npx playwright test src/e2e/tests --config=playwright.config.ts --project=chromium",
+
+  // ⚙️ Run tests in CI with a single worker for stability
+  "ci": "npx playwright test --project=chromium --workers=1",
+
+  // 🔁 Run each test twice to check for flaky behavior
+  "flaky": "npx playwright test --project=chromium --repeat-each=2",
+
+  // 🐞 Run tests in debug mode (launches Inspector)
+  "debug": "npx playwright test --project=chromium --debug",
+
+  // 🎯 Run only smoke tests (tagged with @Smoke)
+  "smoke": "npx playwright test --grep @Smoke --project=chromium",
+
+  // 🔬 Run only sanity tests (tagged with @Sanity)
+  "sanity": "npx playwright test --grep @Sanity --project=chromium",
+
+  // 📚 Run only regression tests (tagged with @Regression)
+  "regression": "npx playwright test --grep @Regression --project=chromium",
+
+  // 🚀 CI test run with Allure report generation (ignores failures for report generation)
+  "test:ci": "npm run allure:remove && (npm run ci || exit 0) && npm run allure:generate",
+
+  // ❌ Generate and open report even if tests fail
+  "test:report:fail": "npm run allure:remove && (npm run test || echo Test failed but continuing...) && npm run allure:generate && npm run allure:open",
+
+  // ✅ Generate and open report only if tests pass
+  "test:report:pass": "npm run allure:remove && npm run test && npm run allure:generate && npm run allure:open",
+
+  // 📦 Install Allure integration for Playwright
+  "allure:install": "npm install --save-dev allure-playwright",
+
+  // 🧹 Remove previous Allure results and reports
+  "allure:remove": "rimraf test-report/allure-results test-report/allure-report",
+
+  // 📊 Generate Allure report
+  "allure:generate": "npx allure generate test-report/allure-results --clean -o test-report/allure-report",
+
+  // 🌐 Open the generated Allure report in browser
+  "allure:open": "allure open test-report/allure-report",
+
+  // 🧾 Shortcut to generate and open report
+  "report": "npm run allure:generate && npm run allure:open",
+
+  // 🔍 Run TypeScript type checks before tests
+  "pretest": "tsc --noEmit",
+
+  // 🧼 Lint codebase using ESLint
+  "lint": "eslint . --ext .ts",
+
+  // 🎨 Format codebase using Prettier
+  "format": "prettier --write ."
 
 # dependencies:
 playwright: Core Playwright library for browser automation.

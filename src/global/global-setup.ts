@@ -1,5 +1,5 @@
 import { FullConfig } from '@playwright/test';
-import { TestData } from '../data/testData';
+import { TestData } from '../testData/testData';
 import { logger } from '../helpers/loggerHelper';
 
 async function globalSetup(config: FullConfig) {
