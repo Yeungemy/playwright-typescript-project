@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/playwright-setup
       - run: npm run smoke
-      - uses: ./.github/actions/playwright-report
+      - uses: ./.github/actions/allure-report
         if: always()
         with:
           test-step-outcome: ${{ job.status }}
