@@ -1,9 +1,10 @@
-import { test, expect } from '../../pages/pageFactory';
+import { test, expect } from '../pages/pageFactory';
 
 test.describe('Login Page', () => {
 
   test.beforeEach(async ({ page }) => {
-    await page.goto(process.env.BASE_URL!);
+    console.log(process.env.BASE_URL);
+    await page.goto(process.env.BASE_URL);
   });
 
   test('@smoke should display the member portal link', async ({ loginPage }) => {
