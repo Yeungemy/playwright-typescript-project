@@ -65,8 +65,6 @@ export default defineConfig({
     },
   ],
 
-  globalSetup: require.resolve('./src/global/global-setup.ts'),
-
   // Output folder for screenshots, videos, traces, etc.
   outputDir: `${testReportPath}/test-artifacts`,
 });

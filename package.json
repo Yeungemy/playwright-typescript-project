@@ -14,7 +14,7 @@
     "debug": "npx playwright test --project=chromium --debug",
     "smoke": "npx playwright test --grep @Smoke --project=chromium",
     "sanity": "npx playwright test --grep @Sanity --project=chromium",
-    "regression": "npx playwright test --grep @Regression --project=chromium", 
+    "regression": "npx playwright test --grep @Regression --project=chromium",
     "test:ci": "npm run allure:remove && (npm run ci || exit 0) && npm run allure:generate",
     "test:allure": "npm run allure:remove && npm run test && npm run allure:generate && npm run allure:open",
     "test:report:fail": "npm run allure:remove && npm run test || echo Test failed but continuing... && npm run allure:generate && npm run allure:open",
@@ -35,6 +35,7 @@
     "@types/node": "^22.15.17",
     "@types/winston": "^2.4.4",
     "allure-playwright": "^3.2.2",
+    "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"

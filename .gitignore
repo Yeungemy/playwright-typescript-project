@@ -4,11 +4,6 @@ package-lock.json
 docs/
 .github/
 
-
-# Test outputs (unified under test-report/)
-test-report/
-# src/playwright-report
-
 # Secrets or sensitive info
 src/secrets
 

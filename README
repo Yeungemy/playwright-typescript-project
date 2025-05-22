@@ -102,13 +102,13 @@ npm install --save-dev @types/wdio__allure-reporter
   "allure:install": "npm install --save-dev allure-playwright",
 
   // 🧹 Remove previous Allure results and reports
-  "allure:remove": "rimraf test-report/allure-results test-report/allure-report",
+  "allure:remove": "rimraf dist/test-report/allure-results dist/test-report/allure-report",
 
   // 📊 Generate Allure report
-  "allure:generate": "npx allure generate test-report/allure-results --clean -o test-report/allure-report",
+  "allure:generate": "npx allure generate dist/test-report/allure-results --clean -o dist/test-report/allure-report",
 
   // 🌐 Open the generated Allure report in browser
-  "allure:open": "allure open test-report/allure-report",
+  "allure:open": "allure open dist/test-report/allure-report",
 
   // 🧾 Shortcut to generate and open report
   "report": "npm run allure:generate && npm run allure:open",
