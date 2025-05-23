@@ -32,6 +32,12 @@ runs:
         fi
       shell: bash
 
+    - name: Remove existing Allure results and report
+      run: |
+        rm -rf "${{ inputs.allure-results-path }}"
+        rm -rf "${{ inputs.allure-report-path }}"
+      shell: bash
+
     - name: Generate Allure Report
       run: |
         npx allure generate "${{ inputs.allure-results-path }}" --clean -o "${{ inputs.allure-report-path }}"

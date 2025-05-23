@@ -1,19 +1,21 @@
-FROM mcr.microsoft.com/playwright:v1.43.1-jammy
+# Use official Playwright base image with dependencies
+FROM mcr.microsoft.com/playwright:v1.52.0-jammy
 
 # Set working directory
 WORKDIR /app
 
-# Copy package and lock files
-COPY package.json package-lock.json* ./
-
-# Install dependencies
+# Copy package files and install dependencies
+COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy all other files
+# Copy all other project files
 COPY . .
 
-# Install Playwright browsers
-RUN npx playwright install --with-deps
+# Ensure Allure CLI is globally available
+RUN npm install -g allure-commandline --save-dev
 
-# Default command to run tests
+# Expose Allure report port (optional)
+EXPOSE 4000
+
+# Default command (can be overridden in workflow or CLI)
 CMD ["npm", "run", "test:ci"]
