@@ -7,7 +7,9 @@ export class CommonUtils {
      * @param length - Length of the string to generate
      */
     static generateRandomString(length: number): string {
-        return Math.random().toString(36).substring(2, length + 2);
+        return Math.random()
+            .toString(36)
+            .substring(2, length + 2);
     }
 
     // /**
@@ -26,9 +28,9 @@ export class CommonUtils {
     //  */
     // static async takeScreenshot(page: Page, name: string): Promise<Buffer> {
     //     logger.info(`Taking screenshot: ${name}`);
-    //     return await page.screenshot({ 
+    //     return await page.screenshot({
     //         path: `./screenshots/${name}.png`,
-    //         fullPage: true 
+    //         fullPage: true
     //     });
     // }
 
@@ -51,4 +53,4 @@ export class CommonUtils {
     //     }
     //     return value;
     // }
-} 
+}

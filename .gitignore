@@ -8,7 +8,7 @@ docs/
 src/secrets
 
 # Environment variables
-environments/.env
+.env
 
 
 # IDE settings

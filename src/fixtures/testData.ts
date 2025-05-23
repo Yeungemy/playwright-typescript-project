@@ -5,7 +5,7 @@ export class TestData {
         return {
             username: `test_user_${CommonUtils.generateRandomString(6)}`,
             password: `pass_${CommonUtils.generateRandomString(8)}`,
-            email: `${CommonUtils.generateRandomString(8)}@test.com`
+            email: `${CommonUtils.generateRandomString(8)}@test.com`,
         };
     }
 
@@ -16,4 +16,4 @@ export class TestData {
     //         environment: CommonUtils.getEnvVariable('ENV', 'dev')
     //     };
     // }
-} 
+}

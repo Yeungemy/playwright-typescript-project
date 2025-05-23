@@ -1,47 +1,67 @@
 # Install Playwright and dependencies:
+
 npm init playwright@latest
 npm install -D @playwright/test@latest
+
 # Also download new browser binaries and their dependencies:
+
 npx playwright install --with-deps
-# Create the config: 
+
+# Create the config:
+
 npm install --save-dev typescript ts-node @types/node @playwright/test
+
 # Initialize TypeScript Configuration
+
 npx tsc --init
+
 # Run the test
-npx playwright test 
+
+npx playwright test
+
 # Running Tests by Tags
+
 npx playwright test --grep "@smoke"
 npx playwright test --grep "@smoke|@regression"
 
 # Running the Example Test in UI Mode
+
 npx playwright test --ui
 
 # Exclude tests by Tags
+
 npx playwright test --grep-invert "@smoke"
 
 # HTML Test Reports
+
 npx playwright show-report
 
 # check version
+
 npx playwright --version
 
 #Install rimraf:
 npm install --save-dev rimraf
 
 # Install allure-playwright
+
 npm install -D allure-playwright
 npm install allure-playwright@latest @playwright/test@latest
 
 # 1. Remove old Allure results and reports
+
 Remove-Item -Recurse -Force "test-results/allure-results", "allure-report"
 
 # 2. Run Playwright tests
+
 npx playwright test
 
 # 3. Generate the Allure report
+
 npx allure generate test-results/allure-results --clean
 
 # 4. Open the Allure report
+
 npx allure open
 
 #Install Faker
@@ -52,77 +72,82 @@ npm install dotenv
 
 npm install --save-dev @types/winston
 npm install @wdio/allure-reporter
-npm install --save-dev @types/wdio__allure-reporter
+npm install --save-dev @types/wdio\_\_allure-reporter
 
+# Connect to database: Microsoft SQL Server (MSSQL)
+
+npm install mssql
 
 # Scripts
- // 🧪 Run UI mode (experimental) for selecting and running tests visually
-  "ui": "npx playwright test --project=chromium --ui",
 
-  // ✅ Standard test run using Chromium
-  "test": "npx playwright test --project=chromium",
+// 🧪 Run UI mode (experimental) for selecting and running tests visually
+"ui": "npx playwright test --project=chromium --ui",
 
-  // 🖥️ Run all tests in headed (non-headless) mode for visual debugging
-  "headed": "npx playwright test --headed",
+// ✅ Standard test run using Chromium
+"test": "npx playwright test --project=chromium",
 
-  // 📡 Run all API tests
-  "api": "npx playwright test src/api/tests",
+// 🖥️ Run all tests in headed (non-headless) mode for visual debugging
+"headed": "npx playwright test --headed",
 
-  // 🌐 Run all E2E tests using a specific config and Chromium
-  "e2e": "npx playwright test src/e2e/tests --config=playwright.config.ts --project=chromium",
+// 📡 Run all API tests
+"api": "npx playwright test src/api/tests",
 
-  // ⚙️ Run tests in CI with a single worker for stability
-  "ci": "npx playwright test --project=chromium --workers=1",
+// 🌐 Run all E2E tests using a specific config and Chromium
+"e2e": "npx playwright test src/e2e/tests --config=playwright.config.ts --project=chromium",
 
-  // 🔁 Run each test twice to check for flaky behavior
-  "flaky": "npx playwright test --project=chromium --repeat-each=2",
+// ⚙️ Run tests in CI with a single worker for stability
+"ci": "npx playwright test --project=chromium --workers=1",
 
-  // 🐞 Run tests in debug mode (launches Inspector)
-  "debug": "npx playwright test --project=chromium --debug",
+// 🔁 Run each test twice to check for flaky behavior
+"flaky": "npx playwright test --project=chromium --repeat-each=2",
 
-  // 🎯 Run only smoke tests (tagged with @Smoke)
-  "smoke": "npx playwright test --grep @Smoke --project=chromium",
+// 🐞 Run tests in debug mode (launches Inspector)
+"debug": "npx playwright test --project=chromium --debug",
 
-  // 🔬 Run only sanity tests (tagged with @Sanity)
-  "sanity": "npx playwright test --grep @Sanity --project=chromium",
+// 🎯 Run only smoke tests (tagged with @Smoke)
+"smoke": "npx playwright test --grep @Smoke --project=chromium",
 
-  // 📚 Run only regression tests (tagged with @Regression)
-  "regression": "npx playwright test --grep @Regression --project=chromium",
+// 🔬 Run only sanity tests (tagged with @Sanity)
+"sanity": "npx playwright test --grep @Sanity --project=chromium",
 
-  // 🚀 CI test run with Allure report generation (ignores failures for report generation)
-  "test:ci": "npm run allure:remove && (npm run ci || exit 0) && npm run allure:generate",
+// 📚 Run only regression tests (tagged with @Regression)
+"regression": "npx playwright test --grep @Regression --project=chromium",
 
-  // ❌ Generate and open report even if tests fail
-  "test:report:fail": "npm run allure:remove && (npm run test || echo Test failed but continuing...) && npm run allure:generate && npm run allure:open",
+// 🚀 CI test run with Allure report generation (ignores failures for report generation)
+"test:ci": "npm run allure:remove && (npm run ci || exit 0) && npm run allure:generate",
 
-  // ✅ Generate and open report only if tests pass
-  "test:report:pass": "npm run allure:remove && npm run test && npm run allure:generate && npm run allure:open",
+// ❌ Generate and open report even if tests fail
+"test:report:fail": "npm run allure:remove && (npm run test || echo Test failed but continuing...) && npm run allure:generate && npm run allure:open",
 
-  // 📦 Install Allure integration for Playwright
-  "allure:install": "npm install --save-dev allure-playwright",
+// ✅ Generate and open report only if tests pass
+"test:report:pass": "npm run allure:remove && npm run test && npm run allure:generate && npm run allure:open",
 
-  // 🧹 Remove previous Allure results and reports
-  "allure:remove": "rimraf dist/test-report/allure-results dist/test-report/allure-report",
+// 📦 Install Allure integration for Playwright
+"allure:install": "npm install --save-dev allure-playwright",
 
-  // 📊 Generate Allure report
-  "allure:generate": "npx allure generate dist/test-report/allure-results --clean -o dist/test-report/allure-report",
+// 🧹 Remove previous Allure results and reports
+"allure:remove": "rimraf dist/test-report/allure-results dist/test-report/allure-report",
 
-  // 🌐 Open the generated Allure report in browser
-  "allure:open": "allure open dist/test-report/allure-report",
+// 📊 Generate Allure report
+"allure:generate": "npx allure generate dist/test-report/allure-results --clean -o dist/test-report/allure-report",
 
-  // 🧾 Shortcut to generate and open report
-  "report": "npm run allure:generate && npm run allure:open",
+// 🌐 Open the generated Allure report in browser
+"allure:open": "allure open dist/test-report/allure-report",
 
-  // 🔍 Run TypeScript type checks before tests
-  "pretest": "tsc --noEmit",
+// 🧾 Shortcut to generate and open report
+"report": "npm run allure:generate && npm run allure:open",
 
-  // 🧼 Lint codebase using ESLint
-  "lint": "eslint . --ext .ts",
+// 🔍 Run TypeScript type checks before tests
+"pretest": "tsc --noEmit",
 
-  // 🎨 Format codebase using Prettier
-  "format": "prettier --write ."
+// 🧼 Lint codebase using ESLint
+"lint": "eslint . --ext .ts",
+
+// 🎨 Format codebase using Prettier
+"format": "prettier --write ."
 
 # dependencies:
+
 playwright: Core Playwright library for browser automation.
 typescript: The TypeScript compiler.
 ts-node: A TypeScript execution engine for Node.js.
@@ -130,21 +155,23 @@ ts-node: A TypeScript execution engine for Node.js.
 @playwright/test: Playwright's own test runner for handling tests.
 
 # Folder Structure
+
 src/pages/: This directory contains Page Object Model classes for each of the major pages in your application.
 src/tests/: Contains the actual test scripts.
 src/utils/: Helper functions and utilities for the framework.
 src/config/: Configuration files (e.g., environment settings, browser configurations).
 
 # Best Practices
-1. **Page Object Model (POM)**: Use POM to separate the test logic from the page structure. This makes tests more readable and maintainable.
-2. **Modular Tests**: Keep tests modular and reusable. Each test should ideally test one thing.
-3. **Assertions**: Use Playwright's built-in assertions or a library like Chai for better readability.
-4. **Environment Configuration**: Use environment variables or a config file to manage different environments (e.g., dev, staging, production).
-5. **Error Handling**: Implement error handling and logging to capture failures and debug information.
-6. **Headless Mode**: Run tests in headless mode for CI/CD pipelines to speed up execution and reduce resource usage, which aligns with other best practices.
-7. **Parallel Execution**: Use Playwright's parallel execution feature to run tests faster. Configure it by setting the `workers` option in the Playwright configuration file (e.g., `playwright.config.ts`) to specify the number of parallel workers.
-8. **Write Independent Tests**: Ensure that tests do not depend on each other. Each test should be able to run independently.
-9. **Use Fixtures**: Use Playwright's fixtures to set up and tear down test environments.
+
+1.  **Page Object Model (POM)**: Use POM to separate the test logic from the page structure. This makes tests more readable and maintainable.
+2.  **Modular Tests**: Keep tests modular and reusable. Each test should ideally test one thing.
+3.  **Assertions**: Use Playwright's built-in assertions or a library like Chai for better readability.
+4.  **Environment Configuration**: Use environment variables or a config file to manage different environments (e.g., dev, staging, production).
+5.  **Error Handling**: Implement error handling and logging to capture failures and debug information.
+6.  **Headless Mode**: Run tests in headless mode for CI/CD pipelines to speed up execution and reduce resource usage, which aligns with other best practices.
+7.  **Parallel Execution**: Use Playwright's parallel execution feature to run tests faster. Configure it by setting the `workers` option in the Playwright configuration file (e.g., `playwright.config.ts`) to specify the number of parallel workers.
+8.  **Write Independent Tests**: Ensure that tests do not depend on each other. Each test should be able to run independently.
+9.  **Use Fixtures**: Use Playwright's fixtures to set up and tear down test environments.
 10. **Documentation**: Document your tests and framework structure for better understanding and onboarding of new team members. For example, use tools like JSDoc for inline documentation or Markdown templates for creating detailed README files.
 11. **Version Control**: Use version control (e.g., Git) to manage changes in your test code and framework.
 12. **Continuous Integration**: Integrate your tests with a CI/CD pipeline to automate the testing process.
@@ -153,84 +180,95 @@ src/config/: Configuration files (e.g., environment settings, browser configurat
 15. **Regular Maintenance**: Regularly update dependencies and refactor code to keep the framework up to date and maintainable.
 16. **Use TypeScript in Test Code**: Leverage TypeScript in your test code for better type safety, code completion, and to catch errors early during development.
 17. **Use Playwright's Trace Viewer**: Use Playwright's trace viewer to debug and analyze test failures. To enable trace generation, set the `trace` option to `'on'`, `'off'`, or `'retain-on-failure'` in the Playwright configuration or in the test setup. For example:
-	```javascript
-	const { test } = require('@playwright/test');
-20. **Use Tags or Descriptions**: Use tags or descriptions to categorize tests and run specific groups of tests. For example, you can use `test.describe` to group related tests:
-	```
-18. **Use Playwright's Codegen**: Use Playwright's code generation feature to quickly create test scripts from user interactions.
-19. **Use Playwright's Locator API**: Use the Locator API for more reliable element selection.
-20. **Use Tags or Descriptions**: Use tags or descriptions to categorize tests and run specific groups of tests.
-21. **Use Custom Matchers**: Create custom matchers for common assertions to improve readability.
-22. **Use Test Hooks**: Use test hooks (beforeAll, beforeEach, afterAll, afterEach) to set up and tear down test environments. For example:
-	```javascript
-	const { test } = require('@playwright/test');
-25. **Follow DRY (Don't Repeat Yourself)**: Avoid code duplication by creating reusable functions and modules. For example, if multiple tests require logging into the application, create a reusable function like `async function login(page, username, password)` in a utility file and call it in your tests instead of duplicating the login steps in each test.
-	test.beforeEach(async ({ page }) => {
-		// Code to run before each test
-		await page.goto('https://example.com');
-	});
+    ```javascript
+    const { test } = require('@playwright/test');
+    ```
+18. **Use Tags or Descriptions**: Use tags or descriptions to categorize tests and run specific groups of tests. For example, you can use `test.describe` to group related tests:
 
-	test.afterAll(async () => {
-		// Code to run after all tests
-		console.log('All tests completed');
-	});
-	```
-23. **Use Test Data Management**: Use a separate file or database for test data to keep tests clean and maintainable.
-24. **Use Browser Contexts**: Use browser contexts to isolate tests and avoid state leakage between tests.
-25. **Follow DRY (Don't Repeat Yourself)**: Avoid code duplication by creating reusable functions and modules.
-26. **Handling Asynchronous Code**: Use async/await for handling asynchronous code to avoid callback hell and improve readability.
-27. **Managing Browser and Context lifecycle**: Use Playwright's browser and context management features to control the lifecycle of your tests. For example:
-	```javascript
-	const { chromium } = require('playwright');
+    ```
 
-	(async () => {
-		const browser = await chromium.launch();
-		const context = await browser.newContext();
-		const page = await context.newPage();
+    ```
 
-		await page.goto('https://example.com');
-		// Perform actions on the page
+19. **Use Playwright's Codegen**: Use Playwright's code generation feature to quickly create test scripts from user interactions.
+20. **Use Playwright's Locator API**: Use the Locator API for more reliable element selection.
+21. **Use Tags or Descriptions**: Use tags or descriptions to categorize tests and run specific groups of tests.
+22. **Use Custom Matchers**: Create custom matchers for common assertions to improve readability.
+23. **Use Test Hooks**: Use test hooks (beforeAll, beforeEach, afterAll, afterEach) to set up and tear down test environments. For example:
+    ```javascript
+    const { test } = require('@playwright/test');
+    ```
+24. **Follow DRY (Don't Repeat Yourself)**: Avoid code duplication by creating reusable functions and modules. For example, if multiple tests require logging into the application, create a reusable function like `async function login(page, username, password)` in a utility file and call it in your tests instead of duplicating the login steps in each test.
+    test.beforeEach(async ({ page }) => {
+    // Code to run before each test
+    await page.goto('https://example.com');
+    });
 
-		await context.close(); // Close the context to clean up resources
-		await browser.close(); // Close the browser
-	})();
-	
-28. Coding Standards
-		Type Annotations: Always use type annotations for variables, function parameters, and return types.
+    test.afterAll(async () => {
+    // Code to run after all tests
+    console.log('All tests completed');
+    });
 
-		function add(a: number, b: number): number {
-			return a + b;
-		}
-		Type Inference: Let TypeScript infer types when it's obvious.
+    ```
 
-		let count = 0; // TypeScript infers count as number
-		Interfaces and Types: Prefer interface for object shapes and type for unions or intersections.
+    ```
 
-		interface User {
-			id: number;
-			name: string;
-		}
+25. **Use Test Data Management**: Use a separate file or database for test data to keep tests clean and maintainable.
+26. **Use Browser Contexts**: Use browser contexts to isolate tests and avoid state leakage between tests.
+27. **Follow DRY (Don't Repeat Yourself)**: Avoid code duplication by creating reusable functions and modules.
+28. **Handling Asynchronous Code**: Use async/await for handling asynchronous code to avoid callback hell and improve readability.
+29. **Managing Browser and Context lifecycle**: Use Playwright's browser and context management features to control the lifecycle of your tests. For example:
 
-		type Result<T> =
-			| { success: true; value: T }
-			| { success: false; error: string };
-		Naming Conventions:
+    ```javascript
+    const { chromium } = require('playwright');
 
-		Use camelCase for variables and functions.
-		Use PascalCase for classes and interfaces.
-		Readability:
+    (async () => {
+        const browser = await chromium.launch();
+        const context = await browser.newContext();
+        const page = await context.newPage();
 
-		Use descriptive names for variables, functions, and classes.
-		Keep functions small and focused on a single task.
-		Documentation: Use JSDoc for documenting code.
+        await page.goto('https://example.com');
+        // Perform actions on the page
 
-		/**
-		* Adds two numbers together.
-		* @param a - First number
-		* @param b - Second number
-		* @returns The sum of the two numbers
-		*/
-		function add(a: number, b: number): number {
-			return a + b;
-		}
-	
+        await context.close(); // Close the context to clean up resources
+        await browser.close(); // Close the browser
+    })();
+    ```
+
+30. Coding Standards
+    Type Annotations: Always use type annotations for variables, function parameters, and return types.
+
+        function add(a: number, b: number): number {
+        	return a + b;
+        }
+        Type Inference: Let TypeScript infer types when it's obvious.
+
+        let count = 0; // TypeScript infers count as number
+        Interfaces and Types: Prefer interface for object shapes and type for unions or intersections.
+
+        interface User {
+        	id: number;
+        	name: string;
+        }
+
+        type Result<T> =
+        	| { success: true; value: T }
+        	| { success: false; error: string };
+        Naming Conventions:
+
+        Use camelCase for variables and functions.
+        Use PascalCase for classes and interfaces.
+        Readability:
+
+        Use descriptive names for variables, functions, and classes.
+        Keep functions small and focused on a single task.
+        Documentation: Use JSDoc for documenting code.
+
+        /**
+        * Adds two numbers together.
+        * @param a - First number
+        * @param b - Second number
+        * @returns The sum of the two numbers
+        */
+        function add(a: number, b: number): number {
+        	return a + b;
+        }
