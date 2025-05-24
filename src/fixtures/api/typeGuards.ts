@@ -1,51 +1,58 @@
 import { z } from 'zod';
 import type {
-    UserSchema,
-    ErrorResponseSchema,
-    ArticleResponseSchema,
+  UserSchema,
+  ErrorResponseSchema
 } from './schemas';
-// If the path is incorrect, update it to the correct relative path where 'schemas' is located.
-// For example, if 'schemas.ts' is in 'c:\development\playwright-typescript-project\fixtures\', use '../../fixtures/schemas';
 
 /**
- * Parameters for making an API request.
- * @typedef {Object} ApiRequestParams
- * @property {'POST' | 'GET' | 'PUT' | 'DELETE'} method - The HTTP method to use.
- * @property {string} url - The endpoint URL for the request.
- * @property {string} [baseUrl] - The base URL to prepend to the endpoint.
- * @property {Record<string, unknown> | null} [body] - The request payload, if applicable.
- * @property {string} [headers] - Additional headers for the request.
+ * Represents parameters for making an API request.
  */
 export type ApiRequestParams = {
-    method: 'POST' | 'GET' | 'PUT' | 'DELETE';
-    url: string;
-    baseUrl?: string;
-    body?: Record<string, unknown> | null;
-    headers?: string;
+  /** The HTTP method to use */
+  method: 'POST' | 'GET' | 'PUT' | 'DELETE';
+  
+  /** The endpoint path (relative to `baseUrl` if provided) */
+  url: string;
+  
+  /** Optional base URL to prepend to the endpoint */
+  baseUrl?: string;
+  
+  /** Optional payload to send with the request */
+  body?: Record<string, unknown> | null;
+  
+  /** Optional HTTP headers to include in the request */
+  headers?: Record<string, string>;
 };
 
 /**
- * Response from an API request.
- * @template T
- * @typedef {Object} ApiRequestResponse
- * @property {number} status - The HTTP status code of the response.
- * @property {T} body - The response body.
+ * Represents the structure of a response from an API request.
+ * 
+ * @template T - The shape of the response body
  */
 export type ApiRequestResponse<T = unknown> = {
-    status: number;
-    body: T;
+  /** HTTP status code */
+  status: number;
+
+  /** Parsed response body */
+  body: T;
 };
 
-// define the function signature as a type
+/**
+ * Function signature for an API request handler.
+ * 
+ * @template T - The expected response type
+ */
 export type ApiRequestFn = <T = unknown>(
-    params: ApiRequestParams
+  params: ApiRequestParams
 ) => Promise<ApiRequestResponse<T>>;
 
-// grouping them all together
+/**
+ * Groups available API methods.
+ */
 export type ApiRequestMethods = {
-    apiRequest: ApiRequestFn;
+  apiRequest: ApiRequestFn;
 };
 
+// Inferred types from Zod schemas
 export type User = z.infer<typeof UserSchema>;
 export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
-export type ArticleResponse = z.infer<typeof ArticleResponseSchema>;

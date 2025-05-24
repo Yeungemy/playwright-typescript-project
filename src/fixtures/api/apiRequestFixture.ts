@@ -1,42 +1,35 @@
 import { test as base } from '@playwright/test';
 import { apiRequest as apiRequestOriginal } from './plainFunction';
-import {
-    ApiRequestFn,
-    ApiRequestMethods,
-    ApiRequestParams,
-    ApiRequestResponse,
+import type {
+  ApiRequestFn,
+  ApiRequestMethods,
+  ApiRequestParams,
+  ApiRequestResponse,
 } from './typeGuards';
 
+/**
+ * Playwright fixture extension that provides an `apiRequest` utility.
+ */
 export const test = base.extend<ApiRequestMethods>({
-    /**
-     * Provides a function to make API requests.
-     *
-     * @param {object} request - The request object.
-     * @param {function} use - The use function to provide the API request function.
-     */
-    apiRequest: async ({ request }, use) => {
-        const apiRequestFn: ApiRequestFn = async <T = unknown>({
-            method,
-            url,
-            baseUrl,
-            body = null,
-            headers,
-        }: ApiRequestParams): Promise<ApiRequestResponse<T>> => {
-            const response = await apiRequestOriginal({
-                request,
-                method,
-                url,
-                baseUrl,
-                body,
-                headers,
-            });
+  /**
+   * `apiRequest` lets you send typed API requests with custom headers/body.
+   * Automatically reuses Playwright's request context.
+   */
+  apiRequest: async ({ request }, use) => {
+    const apiRequestFn: ApiRequestFn = async <T = unknown>(
+      params: ApiRequestParams
+    ): Promise<ApiRequestResponse<T>> => {
+      const response = await apiRequestOriginal({
+        request,
+        ...params, // includes method, url, body, baseUrl, headers, authToken
+      });
 
-            return {
-                status: response.status,
-                body: response.body as T,
-            };
-        };
+      return {
+        status: response.status,
+        body: response.body as T,
+      };
+    };
 
-        await use(apiRequestFn);
-    },
+    await use(apiRequestFn);
+  },
 });
