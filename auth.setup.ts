@@ -2,7 +2,7 @@ import { test as setup, expect } from './src/tests';
 import { User } from './src/tests/api/pages/typeGuards';
 import { UserSchema } from './src/tests/api/pages/schemas';
 
-setup('auth user', async ({ apiRequest, loginPage }) => {
+setup('auth user', async ({ apiRequest, homePage }) => {
     await setup.step('auth for user by API', async () => {
         const apiUrl = process.env.API_URL;
         if (!apiUrl) {
@@ -27,9 +27,9 @@ setup('auth user', async ({ apiRequest, loginPage }) => {
     });
 
     await setup.step(
-        'Navigate to employer portal account login page',
+        'Navigate to employer portal account home page',
         async () => {
-            await loginPage.clickEmployerPortalLink();
+            await homePage.clickEmployerPortalLink();
         }
     );
 });

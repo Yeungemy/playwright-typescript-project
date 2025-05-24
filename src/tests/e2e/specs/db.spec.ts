@@ -1,23 +1,15 @@
 // src/tests/db/db.spec.ts
-import { test, expect } from '@playwright/test';
-import { connectToDb, closeDb } from '../../../utils/dbClient';
-import sql from 'mssql';
-
-let pool: sql.ConnectionPool;
+import { test, expect } from './baseTest';
 
 test.describe('Database Tests', () => {
-    test.beforeAll(async () => {
-        pool = await connectToDb();
+    test('verify database connection', async ({ db }) => {
+        const request = db.request();
+        request.input('MemberId', 17170); // Automatically handles type
+        const result = await request.query(
+            'SELECT ClientPlanId FROM Member WHERE MemberId = @MemberId'
+        );
 
-        await pool.request().query(`
-      `);
-    });
-
-    test.afterAll(async () => {
-        await closeDb(pool);
-    });
-
-    test('verify database connection', async () => {
-        expect(1).toBe(1);
+        expect(result.recordset.length).toBe(1);
+        expect(result.recordset[0].ClientPlanId).toBe(10013);
     });
 });

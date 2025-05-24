@@ -1,17 +1,6 @@
 // utils/dbClient.ts
 import sql from 'mssql';
 
-const config = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    server: process.env.DB_SERVER, // must be a string, like "localhost" or "127.0.0.1"
-    database: process.env.DB_NAME,
-    options: {
-        encrypt: true, // or false depending on your setup
-        trustServerCertificate: true, // depending on env
-    },
-};
-
 export async function connectToDb(): Promise<sql.ConnectionPool> {
     try {
         const config: sql.config = {

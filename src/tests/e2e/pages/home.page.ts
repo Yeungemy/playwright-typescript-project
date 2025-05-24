@@ -1,13 +1,13 @@
 import { Page } from '@playwright/test';
 import { BasePage } from './base.page';
 
-export class LoginPage extends BasePage {
+export class HomePage extends BasePage {
     constructor(protected page: Page) {
         super(page);
     }
 
     /**
-     * Strings used in the login page.
+     * Strings used in the home page.
      */
     get STRINGS() {
         return {
@@ -17,7 +17,7 @@ export class LoginPage extends BasePage {
     }
 
     /**
-     * Selectors used in the login page.
+     * Selectors used in the home page.
      */
     get SELECTORS() {
         return {
@@ -31,7 +31,7 @@ export class LoginPage extends BasePage {
     }
 
     /**
-     * Clicks the Member Portal link on the login page.
+     * Clicks the Member Portal link on the home page.
      * @returns {Promise<void>}
      */
     async clickMemberPortalLink(): Promise<void> {
@@ -39,7 +39,7 @@ export class LoginPage extends BasePage {
     }
 
     /**
-     * Clicks the Employer Portal link on the login page.
+     * Clicks the Employer Portal link on the home page.
      * @returns {Promise<void>}
      */
     async clickEmployerPortalLink(): Promise<void> {

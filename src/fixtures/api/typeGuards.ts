@@ -4,6 +4,8 @@ import type {
     ErrorResponseSchema,
     ArticleResponseSchema,
 } from './schemas';
+// If the path is incorrect, update it to the correct relative path where 'schemas' is located.
+// For example, if 'schemas.ts' is in 'c:\development\playwright-typescript-project\fixtures\', use '../../fixtures/schemas';
 
 /**
  * Parameters for making an API request.

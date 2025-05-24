@@ -1,15 +1,15 @@
 // Pages Factory to handle all page objects
 
 import { test as base } from '@playwright/test';
-import { LoginPage } from './login.page';
+import { HomePage } from '../../tests/e2e/pages/home.page';
 
 export type PageFactory = {
-    loginPage: LoginPage;
+    homePage: HomePage;
 };
 
 export const test = base.extend<PageFactory>({
-    loginPage: async ({ page }, use) => {
-        await use(new LoginPage(page));
+    homePage: async ({ page }, use) => {
+        await use(new HomePage(page));
     },
 });
 

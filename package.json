@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "headed": "npx playwright test src/tests/e2e/loginPage/login.spec.ts --project=chromium --headed",
+        "headed": "npx playwright test src/tests/e2e/homePage/login.spec.ts --project=chromium --headed",
         "ui": "npx playwright test --project=chromium --ui",
         "test": "npx playwright test --project=chromium",
         "ci": "npx playwright test --project=chromium --workers=1",
