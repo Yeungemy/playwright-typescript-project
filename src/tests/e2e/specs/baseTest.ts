@@ -1,6 +1,5 @@
-import { test as base, expect} from '@playwright/test';
+import { test as base, expect } from '@playwright/test';
 import { connectToDb, closeDb } from '../../../fixtures/db/dbClient';
-
 
 // Custom fixtures
 type MyFixtures = {
@@ -19,7 +18,7 @@ const testEx = base.extend<MyFixtures>({
         },
         // 4. Share one connection across all tests in the same worker
         { scope: 'worker' },
-    ],  
+    ],
 });
 
 export { testEx as test, expect };
