@@ -1,13 +1,12 @@
 /**
  * @file apiClient.ts
- * 
+ *
  * Provides a low-level utility function to send API requests using Playwright's `APIRequestContext`.
- * 
+ *
  * - Supports all major HTTP methods (GET, POST, PUT, DELETE).
  * - Handles setting headers, encoding body, and parsing response based on content type.
  * - Designed to be used by higher-level utilities like fixtures or test helpers.
  */
-
 
 import type { APIRequestContext, APIResponse } from '@playwright/test';
 import type { ApiRequestParams } from './types';
@@ -23,7 +22,10 @@ export async function apiRequest({
     body = null,
     headers = {},
     authToken,
-}: ApiRequestParams & { request: APIRequestContext }): Promise<{ status: number; body: unknown }> {
+}: ApiRequestParams & { request: APIRequestContext }): Promise<{
+    status: number;
+    body: unknown;
+}> {
     const fullUrl = baseUrl ? `${baseUrl}${url}` : url;
 
     const options: {
@@ -45,13 +47,20 @@ export async function apiRequest({
     }
 
     const methodName = method.toLowerCase() as keyof APIRequestContext;
-    const methodFn = request[methodName] as (url: string, options?: any) => Promise<APIResponse>;
+    const methodFn = request[methodName] as (
+        url: string,
+        options?: any
+    ) => Promise<APIResponse>;
 
     if (!methodFn) {
         throw new Error(`Unsupported HTTP method: ${method}`);
     }
 
-    const response: APIResponse = await methodFn.call(request, fullUrl, options);
+    const response: APIResponse = await methodFn.call(
+        request,
+        fullUrl,
+        options
+    );
     const contentType = response.headers()['content-type'] || '';
     let parsed: unknown;
 

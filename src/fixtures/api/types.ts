@@ -1,13 +1,12 @@
 /**
  * @file types.ts
- * 
+ *
  * Defines TypeScript types and utility interfaces for making typed API requests.
- * 
+ *
  * - Declares supported HTTP methods.
  * - Describes parameter and response types for API operations.
  * - Centralizes shared type definitions across the API testing framework.
  */
-
 
 /**
  * Supported HTTP methods for API requests.
