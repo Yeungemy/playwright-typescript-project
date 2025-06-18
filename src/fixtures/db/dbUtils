@@ -1,0 +1,11 @@
+import { executeQuery } from './dbClient'
+export async function getOperProfileId(loginName: string): Promise<number | null> {
+    const query = `
+    SELECT TOP 1 OperProfileId 
+    FROM OperatorProfile 
+    WHERE LoginNm = '${loginName}' 
+    ORDER BY OperProfileId
+  `;
+  const result = await executeQuery(query);
+  return result.recordset[0]?.OperProfileId ?? null;
+}

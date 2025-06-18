@@ -1,4 +1,3 @@
-// utils/dbClient.ts
 import sql from 'mssql';
 
 export async function connectToDb(): Promise<sql.ConnectionPool> {
