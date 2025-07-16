@@ -13,12 +13,12 @@ import { z } from 'zod';
 /**
  * Schema for retrieving a VO API token using client credentials.
  */
-export const GetVoApiTokenParamsSchema = z.object({
+export const GetaApiTokenParamsSchema = z.object({
     request: z.custom<APIRequestContext>(),
     clientId: z.string(),
     clientSecret: z.string(),
     environment: z.string(),
 });
 
-/** Type inferred from `GetVoApiTokenParamsSchema` */
-export type GetVoApiTokenParams = z.infer<typeof GetVoApiTokenParamsSchema>;
+/** Type inferred from `GetaApiTokenParamsSchema` */
+export type GetApiTokenParams = z.infer<typeof GetaApiTokenParamsSchema>;

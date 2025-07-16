@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { getVoApiToken, getVoApiTokenWithClaims } from '../../../fixtures/api/apiToken';
+import { getApiToken, getApiTokenWithClientId } from '../../../fixtures/api/apiToken';
 import { contextStore } from '../../../fixtures/api/contextStore';
 
 test.describe('VOAPI Token Tests', () => {
     test('fetch VOAPI token', async ({ request }) => {
-        const token = await getVoApiToken({
+        const token = await getApiToken({
             request,
             clientId: process.env.API_CLIENT_ID!,
             clientSecret: process.env.API_PASSWORD!,
@@ -12,21 +12,21 @@ test.describe('VOAPI Token Tests', () => {
         });
 
         expect(token).toBeTruthy();
-        contextStore.set('voApiToken', token);
-        expect(contextStore.get('voApiToken')).toBe(token);
+        contextStore.set('apiToken', token);
+        expect(contextStore.get('apiToken')).toBe(token);
     });
 
     test('fetch VOAPI token with claims', async ({ request }) => {
-        const token = await getVoApiTokenWithClaims({
+        const token = await getApiTokenWithClientId({
             request,
             clientId: process.env.API_CLIENT_ID!,
             clientSecret: process.env.API_PASSWORD!,
             environment: process.env.ENVIRONMENT!,
-            identityServerUrl: process.env.IDENTITY_SERVER_URL!          
+            identityServerUrl: process.env.API_URL!          
         });
 
         expect(token).toBeTruthy();
-        contextStore.set('voApiToken', token);
-        expect(contextStore.get('voApiToken')).toBe(token);
+        contextStore.set('apiToken', token);
+        expect(contextStore.get('apiToken')).toBe(token);
     });
 });

@@ -1,5 +1,5 @@
 /**
- * @file getVoApiToken.ts
+ * @file getapiToken.ts
  *
  * Implements a helper function to obtain an OAuth2 access token from VOIdentityServer.
  *
@@ -9,13 +9,13 @@
  */
 
 import { expect } from '@playwright/test';
-import { GetVoApiTokenParamsSchema, GetVoApiTokenParams } from './schema';
+import { GetaApiTokenParamsSchema, GetApiTokenParams } from './schema';
 import { executeQuery } from '../db/dbClient';
-import { GetVoApiTokenWithClaimsParams, CachedToken } from './types';
+import { GetApiTokenWithClaimsParams, CachedToken } from './types';
 
 const tokenCache: Record<string, CachedToken> = {};
-export async function getVoApiTokenWithClaims(
-    params: GetVoApiTokenWithClaimsParams
+export async function getApiTokenWithClientId(
+    params: GetApiTokenWithClaimsParams
 ): Promise<string> {
     const { request, clientId, clientSecret, environment, identityServerUrl } =
         params;
@@ -29,7 +29,7 @@ export async function getVoApiTokenWithClaims(
         return cached.accessToken;
     }
 
-    const tokenUrl = `https://${identityServerUrl}/connect/token`;
+    const tokenUrl = `https://${environment}.${identityServerUrl}/connect/token`;
     console.log(`Requesting VOAPI token from ${tokenUrl}`);
 
     // Execute DB query directly using executeQuery
@@ -91,11 +91,11 @@ export async function getVoApiTokenWithClaims(
  * @param params - Config with request context and auth details.
  * @returns A Promise resolving to the access token string.
  */
-export async function getVoApiToken(
-    params: GetVoApiTokenParams
+export async function getApiToken(
+    params: GetApiTokenParams
 ): Promise<string> {
     const { request, clientId, clientSecret, environment } =
-        GetVoApiTokenParamsSchema.parse(params);
+        GetaApiTokenParamsSchema.parse(params);
 
     const tokenUrl = `https://${environment}.onvitalobjects.com/VOIdentityServer/connect/token`;
 

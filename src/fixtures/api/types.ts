@@ -8,7 +8,7 @@
  * - Centralizes shared type definitions across the API testing framework.
  */
 
-import { GetVoApiTokenParams } from './schema';
+import { GetApiTokenParams } from './schema';
 
 /**
  * Supported HTTP methods for API requests.
@@ -60,7 +60,7 @@ export type ApiRequestMethods = {
     apiRequest: ApiRequestFn;
 };
 
-export interface GetVoApiTokenWithClaimsParams extends GetVoApiTokenParams {
+export interface GetApiTokenWithClaimsParams extends GetApiTokenParams {
     identityServerUrl: string;
 }
 

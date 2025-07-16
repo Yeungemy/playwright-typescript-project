@@ -9,7 +9,7 @@
  */
 
 import { apiRequest } from './apiClient';
-import { getVoApiToken } from './apiToken';
+import { getApiToken } from './apiToken';
 import { ApiRequestFn, ApiRequestParams, ApiRequestResponse } from './types';
 import { test as base } from '@playwright/test';
 
@@ -18,7 +18,7 @@ export const test = base.extend<{
     apiRequest: ApiRequestFn;
 }>({
     apiToken: async ({ request }, use) => {
-        const token = await getVoApiToken({
+        const token = await getApiToken({
             request,
             clientId: process.env.CLIENT_ID!,
             clientSecret: process.env.CLIENT_SECRET!,
