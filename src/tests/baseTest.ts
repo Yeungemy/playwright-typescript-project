@@ -1,6 +1,6 @@
 import { test as base, expect } from '@playwright/test';
 import { connectToDb, closeDb } from '../fixtures/db/dbClient';
-import { getApiToken, getApiTokenWithClientId } from '../fixtures/api/apiToken';
+import { getApiToken } from '../fixtures/api/apiToken';
 
 // Custom fixtures
 type MyFixtures = {
@@ -33,21 +33,6 @@ const testEx = base.extend<MyFixtures>({
                 environment: process.env.ENVIRONMENT!,
             });
             await use(token);
-        },
-        { scope: 'test' },
-    ],
-
-    // ✅ Token Fixture (test scoped — must be, since it's a primitive string)
-    tokenWithClaims: [
-        async ({ request }, use) => {
-            const generatedToken = await getApiTokenWithClientId({
-                request,
-                clientId: process.env.API_CLIENT_ID!,
-                clientSecret: process.env.API_PASSWORD!,
-                environment: process.env.ENVIRONMENT!,
-                identityServerUrl: process.env.API_URL!,
-            });
-            await use(generatedToken);
         },
         { scope: 'test' },
     ],

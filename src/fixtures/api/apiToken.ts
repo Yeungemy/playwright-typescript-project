@@ -14,77 +14,6 @@ import { executeQuery } from '../db/dbClient';
 import { GetApiTokenWithClaimsParams, CachedToken } from './types';
 
 const tokenCache: Record<string, CachedToken> = {};
-export async function getApiTokenWithClientId(
-    params: GetApiTokenWithClaimsParams
-): Promise<string> {
-    const { request, clientId, clientSecret, environment, identityServerUrl } =
-        params;
-
-    const cacheKey = `${environment}_${identityServerUrl}`;
-    const now = Date.now();
-
-    // Return cached token if valid
-    const cached = tokenCache[cacheKey];
-    if (cached && now < cached.expiresAt - 5000) {
-        return cached.accessToken;
-    }
-
-    const tokenUrl = `https://${environment}.${identityServerUrl}/connect/token`;
-    console.log(`Requesting VOAPI token from ${tokenUrl}`);
-
-    // Execute DB query directly using executeQuery
-    const query = `
-    SELECT TOP 1 OperProfileId 
-    FROM OperatorProfile 
-    WHERE LoginNm = '${process.env.AUTO_ADMIN_USER}' 
-    ORDER BY OperProfileId
-  `;
-    const result = await executeQuery(query);
-    const operProfileId = result.recordset[0]?.OperProfileId;
-
-    if (!operProfileId) {
-        throw new Error('OperProfileId not found for AUTOADMINUSER');
-    }
-
-    const formBody = new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
-        scope: 'write:MemberAccess',
-        grant_type: 'client_credentials',
-        'CWI-LoginName': 'AUTOADMINUSER',
-        'CWI-OperatorId': operProfileId.toString(),
-        'CWI-LockName': 'AUTOADMINUSER-portal',
-    });
-
-    const response = await request.post(tokenUrl, {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        data: formBody.toString(),
-    });
-
-    const responseText = await response.text();
-    expect(
-        response.status(),
-        `Token fetch failed. Response: ${responseText}`
-    ).toBe(200);
-
-    const json = JSON.parse(responseText);
-    const accessToken = json.access_token;
-    const expiresIn = json.expires_in;
-
-    if (!accessToken || !expiresIn) {
-        throw new Error('Missing access_token or expires_in in token response');
-    }
-
-    tokenCache[cacheKey] = {
-        accessToken,
-        expiresAt: now + expiresIn * 1000,
-    };
-
-    return accessToken;
-}
-
 /**
  * Retrieves an OAuth2 access token using client credentials.
  *
@@ -97,7 +26,17 @@ export async function getApiToken(
     const { request, clientId, clientSecret, environment } =
         GetaApiTokenParamsSchema.parse(params);
 
-    const tokenUrl = `https://${environment}.onvitalobjects.com/VOIdentityServer/connect/token`;
+    const cacheKey = `${environment}_${process.env.API_URL}`;
+    const now = Date.now();
+
+    // Return cached token if valid
+    const cached = tokenCache[cacheKey];
+    if (cached && now < cached.expiresAt - 5000) {
+        return cached.accessToken;
+    }
+
+    const tokenUrl = `https://${environment}.${process.env.API_URL}/connect/token`;
+    console.log(`Requesting VOAPI token from ${tokenUrl}`);
 
     const body = new URLSearchParams({
         client_id: clientId,
