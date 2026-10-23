@@ -8,7 +8,7 @@ test.describe('VOAPI Token Tests', () => {
             request,
             clientId: process.env.API_CLIENT_ID!,
             clientSecret: process.env.API_PASSWORD!,
-            environment: process.env.ENVIRONMENT!
+            environment: process.env.ENVIRONMENT!,
         });
 
         expect(token).toBeTruthy();

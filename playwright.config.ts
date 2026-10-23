@@ -12,7 +12,9 @@ if (!fs.existsSync(testReportPath)) {
 }
 
 export default defineConfig({
-    testDir: './src',
+    testDir: './src/tests',
+    testMatch: '**/*.spec.ts',
+
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,

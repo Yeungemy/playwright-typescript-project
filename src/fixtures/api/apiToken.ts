@@ -20,9 +20,7 @@ const tokenCache: Record<string, CachedToken> = {};
  * @param params - Config with request context and auth details.
  * @returns A Promise resolving to the access token string.
  */
-export async function getApiToken(
-    params: GetApiTokenParams
-): Promise<string> {
+export async function getApiToken(params: GetApiTokenParams): Promise<string> {
     const { request, clientId, clientSecret, environment } =
         GetaApiTokenParamsSchema.parse(params);
 
