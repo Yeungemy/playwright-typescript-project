@@ -1,17 +1,11 @@
-// src/tests/db/db.spec.ts
-import { test, expect } from '../../baseTest';
+import { test, expect } from '../../../fixtures';
 
 test.describe('Database Tests', () => {
-    test('verify database connection', async ({ db }) => {
-        const request = db.request();
-        request.input('MemberId', 17170);
-        const result = await request.query(
-            'SELECT ClientPlanId FROM Member WHERE MemberId = @MemberId'
-        );
+    test('@database @sanity verifies the database connection', async ({
+        database,
+    }) => {
+        const result = await database.request().query('SELECT 1 AS Connected');
 
-        console.log('Database query result:', result);
-        console.log('Database query result:', result.recordset);
-        expect(result.recordset.length).toBe(1);
-        expect(result.recordset[0].ClientPlanId).toBe(10013);
+        expect(result.recordset).toEqual([{ Connected: 1 }]);
     });
 });

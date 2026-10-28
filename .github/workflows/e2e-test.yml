@@ -3,14 +3,14 @@ name: Playwright E2E Tests
 on:
   workflow_dispatch:
 
+permissions:
+  actions: read
+  contents: read
+
 jobs:
   e2e:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/playwright-setup
-      - run: npm run e2e
-      - uses: ./.github/actions/allure-report
-        if: always()
-        with:
-          test-step-outcome: ${{ job.status }}
+    uses: ./.github/workflows/playwright-suite.yml
+    with:
+      suite: e2e
+      workflow-file: e2e-test.yml
+    secrets: inherit

@@ -1,0 +1,14 @@
+services:
+    playwright:
+        build:
+            context: .
+            dockerfile: docker/dockerfile
+        env_file:
+            - .env
+        environment:
+            CI: 'true'
+            HEADLESS: 'true'
+        init: true
+        volumes:
+            - ./dist/test-report:/app/dist/test-report
+            - ./.playwright:/app/.playwright

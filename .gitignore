@@ -1,14 +1,29 @@
 # Node modules
 node_modules/
-package-lock.json
 docs/
-.github
+!docs/
+docs/*
+!docs/TECHNICAL_DESIGN.md
+.github/
+!.github/
+.github/*
+!.github/actions/
+.github/actions/*
+!.github/actions/restore-failure-history/
+!.github/actions/restore-failure-history/action.yml
+!.github/workflows/
+.github/workflows/*
+!.github/workflows/playwright-suite.yml
 
 # Secrets or sensitive info
 src/secrets
+dist
+
 
 # Environment variables
 .env
+.auth/
+.playwright/
 
 
 # IDE settings
@@ -26,6 +41,7 @@ Thumbs.db
 dist/
 build/
 *.tsbuildinfo
+.tsupgrader/runtime-validation/standalone-result.json
 
 # Debug logs
 npm-debug.log*

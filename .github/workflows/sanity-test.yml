@@ -3,14 +3,14 @@ name: Playwright Sanity Tests
 on:
   workflow_dispatch:
 
+permissions:
+  actions: read
+  contents: read
+
 jobs:
   sanity:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/playwright-setup
-      - run: npm run sanity
-      - uses: ./.github/actions/allure-report
-        if: always()
-        with:
-          test-step-outcome: ${{ job.status }}
+    uses: ./.github/workflows/playwright-suite.yml
+    with:
+      suite: sanity
+      workflow-file: sanity-test.yml
+    secrets: inherit

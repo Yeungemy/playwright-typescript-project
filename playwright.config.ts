@@ -1,38 +1,44 @@
 import { defineConfig, devices } from '@playwright/test';
 import os from 'os';
-import fs from 'fs';
-import * as dotenv from 'dotenv';
-dotenv.config();
+import { environment } from './src/config/environment';
 
-const testReportPath = 'dist/test-report';
-
-// Ensure the folder exists
-if (!fs.existsSync(testReportPath)) {
-    fs.mkdirSync(testReportPath, { recursive: true });
-}
+const testReportPath =
+    process.env.PLAYWRIGHT_REPORT_DIRECTORY ?? 'dist/test-report';
+const allureResultsPath = `${testReportPath}/allure-results`;
 
 export default defineConfig({
+    globalSetup: './src/config/global-setup.ts',
     testDir: './src/tests',
     testMatch: '**/*.spec.ts',
 
     fullyParallel: true,
-    forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 2 : 0,
-    workers: process.env.CI ? 1 : undefined,
+    forbidOnly: environment.isCi,
+    retries: environment.isCi ? 2 : 0,
+    workers: environment.workers ?? (environment.isCi ? 1 : undefined),
+    expect: {
+        timeout: environment.defaultTimeout,
+    },
 
     reporter: [
-        // ['line'],
-        // ['html', { outputFolder: `${testReportPath}/html-report` }],
+        ['list'],
+        ['./src/reporting/failureHistoryReporter.ts'],
+        [
+            'html',
+            {
+                outputFolder: `${testReportPath}/html-report`,
+                open: 'never',
+            },
+        ],
         [
             'allure-playwright',
             {
-                resultsDir: `${testReportPath}/allure-results`,
+                resultsDir: allureResultsPath,
                 detail: true,
                 suiteTitle: true,
                 environmentInfo: {
                     os_platform: os.platform(),
                     os_release: os.release(),
-                    os_version: (os as any).version?.() || 'N/A',
+                    os_version: os.version(),
                     node_version: process.version,
                 },
             },
@@ -40,13 +46,13 @@ export default defineConfig({
     ],
 
     use: {
-        baseURL: process.env.BASE_URL,
-        // headless: false,
+        baseURL: environment.baseUrl,
+        headless: environment.headless,
         trace: 'retain-on-failure',
         screenshot: 'only-on-failure',
         video: 'retain-on-failure',
-        actionTimeout: 15000,
-        navigationTimeout: 30000,
+        actionTimeout: environment.actionTimeout,
+        navigationTimeout: environment.navigationTimeout,
         viewport: { width: 1920, height: 1080 },
         ignoreHTTPSErrors: true,
         testIdAttribute: 'data-testid',
@@ -67,6 +73,5 @@ export default defineConfig({
         },
     ],
 
-    // Output folder for screenshots, videos, traces, etc.
     outputDir: `${testReportPath}/test-artifacts`,
 });

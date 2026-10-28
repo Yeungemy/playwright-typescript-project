@@ -1,0 +1,48 @@
+name: Restore Playwright failure history
+description: Restore the latest failure-history artifact for this workflow.
+
+inputs:
+    workflow-file:
+        description: Workflow file whose previous run supplies failure history.
+        required: true
+    artifact-name:
+        description: Name of the previously uploaded history artifact.
+        required: true
+
+runs:
+    using: composite
+    steps:
+        - name: Restore history from the latest completed workflow run
+          shell: bash
+          env:
+              GH_TOKEN: ${{ github.token }}
+              WORKFLOW_FILE: ${{ inputs.workflow-file }}
+              ARTIFACT_NAME: ${{ inputs.artifact-name }}
+          run: |
+              previous_run_id="$(gh run list \
+                --workflow "$WORKFLOW_FILE" \
+                --branch "$GITHUB_REF_NAME" \
+                --status completed \
+                --limit 1 \
+                --json databaseId \
+                --jq '.[0].databaseId // empty')"
+
+              if [[ -z "$previous_run_id" ]]; then
+                echo "No previous completed workflow run; starting failure history."
+                exit 0
+              fi
+
+              available_artifacts="$(gh api \
+                "repos/$GITHUB_REPOSITORY/actions/runs/$previous_run_id/artifacts" \
+                --jq '.artifacts[] | select(.expired == false) | .name')"
+
+              if ! printf '%s\n' "$available_artifacts" | grep -Fqx -- "$ARTIFACT_NAME"; then
+                echo "No unexpired failure-history artifact in run $previous_run_id; starting failure history."
+                exit 0
+              fi
+
+              mkdir -p .playwright
+              gh run download "$previous_run_id" \
+                --name "$ARTIFACT_NAME" \
+                --dir .playwright
+              test -s .playwright/failure-history.json

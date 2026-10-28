@@ -1,0 +1,174 @@
+name: Reusable Playwright suite
+
+on:
+    workflow_call:
+        inputs:
+            suite:
+                description: npm test script suffix (e2e, api, smoke, sanity, regression)
+                required: true
+                type: string
+            workflow-file:
+                description: Caller workflow file used to find its previous history run
+                required: true
+                type: string
+
+permissions:
+    actions: read
+    contents: read
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        concurrency:
+            group: ${{ github.workflow }}-${{ github.ref }}
+            cancel-in-progress: false
+        env:
+            CI: 'true'
+            HEADLESS: 'true'
+            ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+            COM_DOMAIN: ${{ vars.COM_DOMAIN }}
+            CA_DOMAIN: ${{ vars.CA_DOMAIN }}
+            API_DOMAIN: ${{ vars.API_DOMAIN }}
+            API_CLIENT_ID: ${{ secrets.API_CLIENT_ID }}
+            API_PASSWORD: ${{ secrets.API_PASSWORD }}
+            DB_HOST: ${{ secrets.DB_HOST }}
+            DB_USER: ${{ secrets.DB_USER }}
+            DB_PASS: ${{ secrets.DB_PASS }}
+            DB_PRIMARY_Name: ${{ vars.DB_PRIMARY_NAME }}
+        steps:
+            - uses: actions/checkout@v4
+            - uses: ./.github/actions/playwright-setup
+            - uses: ./.github/actions/restore-failure-history
+              with:
+                  workflow-file: ${{ inputs.workflow-file }}
+                  artifact-name: playwright-failure-history-${{ inputs.suite }}
+            - name: Type-check project
+              id: typecheck
+              run: npm run typecheck
+            - name: Run ${{ inputs.suite }} tests
+              id: tests
+              run: npm run test:${{ inputs.suite }}
+            - name: Ensure report summary exists
+              if: always()
+              shell: bash
+              env:
+                  TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
+                  TEST_OUTCOME: ${{ steps.tests.outcome }}
+              run: |
+                  mkdir -p dist/test-report
+                  if [[ ! -s dist/test-report/summary.json ]]; then
+                    node <<'NODE'
+                    const fs = require('node:fs');
+                    const typecheck = process.env.TYPECHECK_OUTCOME ?? 'not-run';
+                    const tests = process.env.TEST_OUTCOME ?? 'not-run';
+                    const status = typecheck === 'success' && tests === 'success' ? 'unknown' : 'failed';
+                    const summary = {
+                      generatedAt: new Date().toISOString(),
+                      status,
+                      message: 'Playwright did not produce a test summary; see the workflow logs for the failing or skipped step.',
+                      counts: { total: null, passed: null, failed: null, flaky: null, skipped: null },
+                      tests: []
+                    };
+                    fs.writeFileSync('dist/test-report/summary.json', `${JSON.stringify(summary, null, 2)}\n`);
+                    NODE
+                  fi
+            - uses: ./.github/actions/allure-report
+              if: always()
+              with:
+                  test-step-outcome: ${{ job.status }}
+                  allure-upload: 'true'
+                  allure-retention-days: '30'
+                  suite-name: ${{ inputs.suite }}
+            - name: Summarize report metrics
+              id: report-summary
+              if: always()
+              shell: bash
+              run: |
+                  node <<'NODE'
+                  const fs = require('node:fs');
+                  const { randomUUID } = require('node:crypto');
+                  const summary = JSON.parse(fs.readFileSync('dist/test-report/summary.json', 'utf8'));
+                  const counts = summary.counts ?? {};
+                  const output = process.env.GITHUB_OUTPUT;
+                  const failureStreaks = (summary.tests ?? [])
+                    .filter((test) => test.status === 'failed')
+                    .map((test) => `- ${test.title}: ${test.observedFailureRuns ?? 1} consecutive failed run(s), age ${test.failureAgeDays ?? 0} day(s), ${test.file}`)
+                    .join('\n') || 'No failed test cases.';
+                  const delimiter = `FAILURES_${randomUUID()}`;
+                  fs.appendFileSync(output, [
+                    `status=${summary.status ?? 'unknown'}`,
+                    `total=${counts.total ?? 'unknown'}`,
+                    `passed=${counts.passed ?? 'unknown'}`,
+                    `failed=${counts.failed ?? 'unknown'}`,
+                    `flaky=${counts.flaky ?? 'unknown'}`,
+                    `skipped=${counts.skipped ?? 'unknown'}`,
+                  ].join('\n') + '\n');
+                  fs.appendFileSync(output, `failure_streaks<<${delimiter}\n${failureStreaks}\n${delimiter}\n`);
+                  NODE
+            - uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  name: playwright-report-${{ inputs.suite }}
+                  path: |
+                      dist/test-report/summary.json
+                      dist/test-report/html-report
+                      dist/test-report/test-artifacts
+                  if-no-files-found: warn
+                  retention-days: 30
+            - uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  name: playwright-failure-history-${{ inputs.suite }}
+                  path: .playwright/failure-history.json
+                  if-no-files-found: warn
+                  retention-days: 90
+            - name: Check email notification configuration
+              id: email-config
+              if: always()
+              shell: bash
+              env:
+                  SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+                  SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+                  SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+                  SMTP_FROM: ${{ secrets.SMTP_FROM || secrets.SMTP_USERNAME }}
+                  REPORT_EMAIL_TO: ${{ vars.REPORT_EMAIL_TO || 'emyzheng80@gmail.com' }}
+              run: |
+                  if [[ -n "$SMTP_SERVER" && -n "$SMTP_USERNAME" && -n "$SMTP_PASSWORD" && -n "$SMTP_FROM" && -n "$REPORT_EMAIL_TO" ]]; then
+                    echo "configured=true" >> "$GITHUB_OUTPUT"
+                    echo "Post-run email notification is configured for $REPORT_EMAIL_TO."
+                  else
+                    echo "configured=false" >> "$GITHUB_OUTPUT"
+                    echo "::warning::Email not sent. Configure SMTP_SERVER, SMTP_USERNAME, SMTP_PASSWORD secrets and REPORT_EMAIL_TO repository variable (SMTP_FROM is optional and defaults to SMTP_USERNAME)."
+                  fi
+            - name: Email Playwright run report
+              uses: dawidd6/action-send-mail@v4
+              if: always() && steps.email-config.outputs.configured == 'true'
+              with:
+                  server_address: ${{ secrets.SMTP_SERVER }}
+                  server_port: ${{ secrets.SMTP_PORT || '465' }}
+                  secure: ${{ (secrets.SMTP_PORT || '465') == '465' }}
+                  username: ${{ secrets.SMTP_USERNAME }}
+                  password: ${{ secrets.SMTP_PASSWORD }}
+                  from: ${{ secrets.SMTP_FROM || secrets.SMTP_USERNAME }}
+                  to: ${{ vars.REPORT_EMAIL_TO || 'emyzheng80@gmail.com' }}
+                  subject: >-
+                      Playwright ${{ inputs.suite }}: ${{ steps.report-summary.outputs.status }}
+                      (${{ steps.report-summary.outputs.failed }} failed)
+                  body: |
+                      Playwright ${{ inputs.suite }} test run completed.
+
+                      Status: ${{ steps.report-summary.outputs.status }}
+                      Tests: ${{ steps.report-summary.outputs.total }}
+                      Passed: ${{ steps.report-summary.outputs.passed }}
+                      Failed: ${{ steps.report-summary.outputs.failed }}
+                      Flaky: ${{ steps.report-summary.outputs.flaky }}
+                      Skipped: ${{ steps.report-summary.outputs.skipped }}
+                      Consecutive failure streaks:
+                      ${{ steps.report-summary.outputs.failure_streaks }}
+
+                      Open the Playwright HTML or Allure report, select Failed, and open a failed test to see its location, failure age, and consecutive failure count.
+
+                      Download the Allure, Playwright HTML, summary, and test artifacts from:
+                      ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  attachments: dist/test-report/summary.json
+                  convert_markdown: true

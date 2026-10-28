@@ -4,15 +4,16 @@ description: 'Generate and Upload Allure Report from Playwright'
 inputs:
   test-step-outcome:
     description: 'Outcome of the test step (success or failure)'
-    required: true
-  allure-upload:
-    description: 'Whether to always upload the Allure report or only on failure'
     required: false
-    default: 'false'
+    default: 'unknown'
+  allure-upload:
+    description: 'Whether to upload the Allure report after every run'
+    required: false
+    default: 'true'
   allure-retention-days:
     description: 'Retention days for the uploaded Allure report artifact'
     required: false
-    default: '5'
+    default: '30'
   allure-results-path:
     description: 'Path to the Allure results directory'
     required: false
@@ -21,32 +22,55 @@ inputs:
     description: 'Output directory for the generated Allure report'
     required: false
     default: 'dist/test-report/allure-report'
+  suite-name:
+    description: 'Suite label used to make the report artifact name unique'
+    required: false
+    default: 'playwright'
 
 runs:
   using: 'composite'
   steps:
-    - name: Install Allure CLI if missing
-      run: |
-        if ! command -v allure &> /dev/null; then
-          npm install -g allure-commandline@2.20.1
-        fi
+    - name: Check for Allure test results
+      id: check-results
+      if: always()
       shell: bash
-
-    - name: Remove existing Allure results and report
       run: |
-        rm -rf "${{ inputs.allure-results-path }}"
+        if [[ -d "${{ inputs.allure-results-path }}" ]] && \
+          find "${{ inputs.allure-results-path }}" -type f -name '*-result.json' -print -quit | grep -q .; then
+          echo "available=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "available=false" >> "$GITHUB_OUTPUT"
+          echo "No Allure test results were produced."
+        fi
+
+    - name: Add run metrics and failure streaks to Allure
+      if: always() && steps.check-results.outputs.available == 'true'
+      shell: bash
+      env:
+        PLAYWRIGHT_REPORT_DIRECTORY: dist/test-report
+        ALLURE_REPORT_DIRECTORY: ${{ inputs.allure-report-path }}
+        ALLURE_RESULTS_DIRECTORY: ${{ inputs.allure-results-path }}
+      run: |
+        node scripts/write-allure-environment.mjs
+
+    - name: Remove existing Allure report
+      if: always() && steps.check-results.outputs.available == 'true'
+      run: |
         rm -rf "${{ inputs.allure-report-path }}"
       shell: bash
 
     - name: Generate Allure Report
+      if: always() && steps.check-results.outputs.available == 'true'
       run: |
-        npx allure generate "${{ inputs.allure-results-path }}" --clean -o "${{ inputs.allure-report-path }}"
+        npx --yes allure-commandline@2.34.1 generate "${{ inputs.allure-results-path }}" --clean -o "${{ inputs.allure-report-path }}"
       shell: bash
 
     - name: Upload Allure Report Artifact
       uses: actions/upload-artifact@v4
-      if: ${{ inputs.allure-upload == 'true' || inputs.test-step-outcome == 'failure' }}
+      if: always() && steps.check-results.outputs.available == 'true' && inputs.allure-upload == 'true'
       with:
-        name: allure-report-${{ github.job }}
-        path: ${{ inputs.allure-report-path }}
+        name: allure-report-${{ inputs.suite-name }}-${{ github.run_id }}
+        path: |
+          ${{ inputs.allure-report-path }}
+          dist/test-report/summary.json
         retention-days: ${{ inputs.allure-retention-days }}
