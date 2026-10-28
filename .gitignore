@@ -18,6 +18,8 @@ docs/*
 # Secrets or sensitive info
 src/secrets
 dist
+tests
+pages
 
 
 # Environment variables
